@@ -89,14 +89,35 @@ Cuando un conjunto de usuarios consulta un enésimo número (superior a 1000000)
 2. ¿Brevemente describa para qué sirve cada recurso?
 3. ¿Al cerrar la conexión ssh con la VM, por qué se cae la aplicación que ejecutamos con el comando `npm FibonacciApp.js`? ¿Por qué debemos crear un *Inbound port rule* antes de acceder al servicio?
 4. Adjunte tabla de tiempos e interprete por qué la función tarda tando tiempo.
+
+    ![](https://cdn.discordapp.com/attachments/748248118214262955/772523446860120064/unknown.png)
+    
+    ![](https://cdn.discordapp.com/attachments/748248118214262955/772525483719917628/unknown.png)
+
+
 5. Adjunte imágen del consumo de CPU de la VM e interprete por qué la función consume esa cantidad de CPU.
+
+    ![](https://cdn.discordapp.com/attachments/748248118214262955/772524296777236490/unknown.png)
+    
 6. Adjunte la imagen del resumen de la ejecución de Postman. Interprete:
     * Tiempos de ejecución de cada petición.
     * Si hubo fallos documentelos y explique.
+    
+    ![](https://cdn.discordapp.com/attachments/748248118214262955/772524684385845308/unknown.png)
+   
+    ![](https://cdn.discordapp.com/attachments/748248118214262955/772527486647009320/unknown.png)
+
+
 7. ¿Cuál es la diferencia entre los tamaños `B2ms` y `B1ls` (no solo busque especificaciones de infraestructura)?
+
+
 8. ¿Aumentar el tamaño de la VM es una buena solución en este escenario?, ¿Qué pasa con la FibonacciApp cuando cambiamos el tamaño de la VM?
 9. ¿Qué pasa con la infraestructura cuando cambia el tamaño de la VM? ¿Qué efectos negativos implica?
 10. ¿Hubo mejora en el consumo de CPU o en los tiempos de respuesta? Si/No ¿Por qué?
+
+    ![](https://cdn.discordapp.com/attachments/748248118214262955/772528740059054090/unknown.png)
+    
+    
 11. Aumente la cantidad de ejecuciones paralelas del comando de postman a `4`. ¿El comportamiento del sistema es porcentualmente mejor?
 
 ### Parte 2 - Escalabilidad horizontal
