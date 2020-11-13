@@ -86,18 +86,45 @@ Cuando un conjunto de usuarios consulta un enésimo número (superior a 1000000)
 **Preguntas**
 
 1. ¿Cuántos y cuáles recursos crea Azure junto con la VM?
+
+    1. Interfaz de red.
+    2. Dirección IP Pública.
+    3. Disco.
+    4. Red Virtual.
+    5. Cuenta de almacenamiento.
+    6. Grupo de Seguridad de la Red.
+    
+    
 2. ¿Brevemente describa para qué sirve cada recurso?
+
+    1. ***Interfaz de Red***: Las interfaces de red se utilizan para configurar direcciones IP, configuraciones de red virtual y servidores DNS que se asignarán a una máquina virtual. Microsoft Azure admite la conexión de múltiples interfaces de red (NIC) a una máquina virtual para una flexibilidad adicional en las opciones de conectividad de red.
+    2. ***Dirección IP Pública***: es una dirección IP dinámica o estática que puede asignar a máquinas virtuales, equilibradores de carga y puertas de enlace de red virtual para comunicarse con Internet. Sus direcciones IP públicas están asociadas con su suscripción de Azure y se pueden mover libremente entre los recursos de Azure.
+    3. ***Disco***: Cada máquina virtual de Azure está conectada a al menos un disco para el sistema operativo y el almacenamiento persistente. Un disco puede ser una unidad estándar (HDD) o premium (SSD). Los discos creados con este método solo se pueden usar con máquinas virtuales clásicas.
+    4. ***Red Virtual***: Azure Virtual Network (VNet) es el bloque de creación fundamental de una red privada en Azure. VNet permite muchos tipos de recursos de Azure, como Azure Virtual Machines (máquinas virtuales), para comunicarse de forma segura entre usuarios, con Internet y con las redes locales.
+    5. ***Cuenta de almacenamiento***: Azure Storage es un servicio administrado por Microsoft que proporciona almacenamiento en la nube altamente disponible, seguro, duradero, escalable y redundante.
+    6. ***Grupo de Seguridad de la Red***: Un grupo de seguridad de red es una capa de seguridad que actúa como un firewall virtual para controlar el tráfico de entrada y salida de máquinas virtuales (a través de interfaces de red) y subredes. Contiene un conjunto de reglas de seguridad que permiten o niegan el tráfico entrante y saliente utilizando las siguientes 5 tuplas: protocolo, rango de dirección IP de origen, rango de puerto de origen, rango de dirección IP de destino y rango de puerto de destino.
+    
+    
 3. ¿Al cerrar la conexión ssh con la VM, por qué se cae la aplicación que ejecutamos con el comando `npm FibonacciApp.js`? ¿Por qué debemos crear un *Inbound port rule* antes de acceder al servicio?
+
+    + La conexión por shh funciona por sesión, en el momento en el que nos conectamos la sesión mantiene los procesos que ejecutamos en los recursos, sin esta todos ellos se terminan (también los subprocesos).
+
+    + La inbound port rule es importante para permitir el tráfico a través de un puerto y protocolo específico (UDP o TCP).
+    
+    
 4. Adjunte tabla de tiempos e interprete por qué la función tarda tando tiempo.
 
     ![](https://cdn.discordapp.com/attachments/748248118214262955/772523446860120064/unknown.png)
     
     ![](https://cdn.discordapp.com/attachments/748248118214262955/772525483719917628/unknown.png)
 
+    En este caso el algoritmo de fibonacci no está implementado de la mejor forma y su tiempo de ejecución tarda demasiado, a esto se le suma latencia entre la conexión del cliente y los servidores intermediarios necesarios.
 
 5. Adjunte imágen del consumo de CPU de la VM e interprete por qué la función consume esa cantidad de CPU.
 
     ![](https://cdn.discordapp.com/attachments/748248118214262955/772524296777236490/unknown.png)
+    
+    El cosumo de CPU es bastante alto debido a que la implementación del fibonacci está ocupando demasiados recursos en este caso con un procesador sencillo y un algoritmo sin ningun tipo de memoization es muy facil consumirse los recursos.
     
 6. Adjunte la imagen del resumen de la ejecución de Postman. Interprete:
     * Tiempos de ejecución de cada petición.
@@ -107,16 +134,28 @@ Cuando un conjunto de usuarios consulta un enésimo número (superior a 1000000)
    
     ![](https://cdn.discordapp.com/attachments/748248118214262955/772527486647009320/unknown.png)
 
-
+    
 7. ¿Cuál es la diferencia entre los tamaños `B2ms` y `B1ls` (no solo busque especificaciones de infraestructura)?
+    
+    ![](https://cdn.discordapp.com/attachments/748248118214262955/776561123804708915/unknown.png)
 
-
+    Como se puede ver en la imagen, la capacidad del B2ms es mucho mas superior, al igual que su costo, esto permite que la aplicación tenga muchos mas recursos disponibles.
+    
 8. ¿Aumentar el tamaño de la VM es una buena solución en este escenario?, ¿Qué pasa con la FibonacciApp cuando cambiamos el tamaño de la VM?
+
+En este escenario se han tenido en cuenta los tiempos de respuesta y la cantidad de peticiones a procesar, netamente hablando de peticiones simultaneas esta es una solución viable. Pero por el lado del tiempo de respuesta no hay mucho que esta solución nos pueda proveer.
+
+
 9. ¿Qué pasa con la infraestructura cuando cambia el tamaño de la VM? ¿Qué efectos negativos implica?
+
+Se detiene el servicio y se debe reiniciar la maquina lo que implica que se pierde disponibilidad y hay que correr los servicios de nuevo.
+
+
 10. ¿Hubo mejora en el consumo de CPU o en los tiempos de respuesta? Si/No ¿Por qué?
 
     ![](https://cdn.discordapp.com/attachments/748248118214262955/772528740059054090/unknown.png)
     
+    Hubo una mejora en el consumo de CPU como se puede ver en la imagen, la mejora se debe a que el disco tiene mayor capacidad de procesamientdos lo que permite que las conexiones no se cierren y la aplicación soporte más cálculos por segundo.
     
 11. Aumente la cantidad de ejecuciones paralelas del comando de postman a `4`. ¿El comportamiento del sistema es porcentualmente mejor?
 
@@ -206,13 +245,74 @@ newman run ARSW_LOAD-BALANCING_AZURE.postman_collection.json -e [ARSW_LOAD-BALAN
 
 **Preguntas**
 
-* ¿Cuáles son los tipos de balanceadores de carga en Azure y en qué se diferencian?, ¿Qué es SKU, qué tipos hay y en qué se diferencian?, ¿Por qué el balanceador de carga necesita una IP pública?
+* ¿Cuáles son los tipos de balanceadores de carga en Azure y en qué se diferencian?
+
+    a. Public Load Balancer asigna la dirección IP pública y el puerto del tráfico entrante a la dirección IP privada y al puerto de la máquina virtual. 
+
+    b. Internal Load Balancer dirige el tráfico sólo a los recursos que están contenidos en la red virtual.
+ 
+   
+* ¿Qué es SKU, qué tipos hay y en qué se diferencian?, ¿Por qué el balanceador de carga necesita una IP pública?
+    
+    **SKU(Stock Keeping Unit)**: Representa una unidad de mantenimiento de existencias comprable bajo un producto. ***Los tipos que existen son el básico y el estandar***. El SKU estándar tiene más características que el básico, unas cuantas diferencias son el soporte de mayor cantidad de instancias, soporte del protocolo HTTPS en sus Health Probes, la mayoría de las operaciones se realiza en menos de 30 segundos, pero no es gratis como el SKU básico.
+
+    El balanceador de carga necesita una ***IP pública*** por que actúa como el único punto con el que los clientes interactúan con la aplicación, es el encargado de distribuir el tráfico entre varios nodos disponibles.
+    
+    
 * ¿Cuál es el propósito del *Backend Pool*?
+
+    **Backend Pool**: se refiere al conjunto de backends que reciben un tráfico similar para su aplicación. En otras palabras, es una agrupación lógica de las instancias de su aplicación en todo el mundo que reciben el mismo tráfico y responden con el comportamiento esperado. Estos "backends" se despliegan a través de diferentes regiones o dentro de la misma región. Todos los backends pueden estar en modo de despliegue Activo/Activo o lo que se define como configuración Activo/Pasivo.
+    
+    - **Propósito**: Definir cómo los diferentes backends deben ser evaluados a través de sondas de salud. También define cómo se produce el equilibrio de carga entre ellos.
+    
 * ¿Cuál es el propósito del *Health Probe*?
-* ¿Cuál es el propósito de la *Load Balancing Rule*? ¿Qué tipos de sesión persistente existen, por qué esto es importante y cómo puede afectar la escalabilidad del sistema?.
-* ¿Qué es una *Virtual Network*? ¿Qué es una *Subnet*? ¿Para qué sirven los *address space* y *address range*?
+
+     La configuración de la sonda de salud y las respuestas de las sondas determinan qué instancias del conjunto del backend recibirán nuevos flujos. Puede utilizar sondas de salud para detectar el fallo de una aplicación en un punto final del backend.
+     
+     
+* ¿Cuál es el propósito de la *Load Balancing Rule*? 
+    
+    Distribuir el tráfico que llega al front hacia los backend pools.
+
+
+* ¿Qué tipos de sesión persistente existen, por qué esto es importante y cómo puede afectar la escalabilidad del sistema?.
+
+    + **None (hash-based)**: Especifica que las solicitudes sucesivas del mismo cliente pueden ser manejadas por cualquier máquina virtual.
+    
+    + **Client IP (source IP affinity 2-tuple)**: Especifica que las peticiones sucesivas de la misma dirección IP del cliente serán gestionadas por la misma máquina virtual.
+    
+    + **Client IP and Protocol (Source IP affinity 3-tuple)**: Especifica que las solicitudes sucesivas de la misma combinación de dirección IP de cliente y protocolo serán tratadas por la misma máquina virtual.
+    
+    Indica la forma en que las peticiones deben comportarse al momento de llegar a el balanceador de carga, dependiendo de su configuración decide si esa petición se va a una máquina especifica o a una aleatoria. Afecta la escalabilidad en el sentido de que la configuración debe estar dada por el tipo de aplicación y servicio que se está ofreciendo.
+    
+* ¿Qué es una *Virtual Network*? 
+    
+    **Virtual Network**: Representación de una red propia en la nube. Es un aislamiento lógico de la nube de Azure dedicada a la suscripción del usuario. Puede utilizar VNets para aprovisionar y gestionar redes virtuales privadas (VPNs) en Azure y, opcionalmente, enlazar las VNets con otras VNets en Azure, o con una infraestructura de TI local.
+
+
+* ¿Qué es una *Subnet*? 
+    
+    **Subnet**: Rango de direcciones lógicas. Al mantener una red de gran tamaño, es una buena estrategia dividirla en subredes para reducir el tamaño de dominios de broadcast y hacerla más fácil de administrar. En Azure la Subnet permite segmentar la red virtual en una o más subredes y asignar una parte del espacio de direcciones de la Virtual Network a cada subred.
+
+
+* ¿Para qué sirven los *address space* y *address range*?
+
+    **Address space**: Especifica un espacio de direcciones IP privado personalizado utilizando direcciones públicas y privadas. Azure asigna a los recursos en una red virtual una dirección IP privada desde el espacio de direcciones que se asigne.
+    
+    **Address range**: Rango de direcciones IP que se define a partir del address space.
+    
+    
 * ¿Qué son las *Availability Zone* y por qué seleccionamos 3 diferentes zonas?. ¿Qué significa que una IP sea *zone-redundant*?
+
+    **Zonas de Disponibilidad**: Son promesas de disponibilidad que protegen las aplicaciones y datos de los fallos del centro de datos. También son lugares físicos únicos dentro de una región de Azure.
+
+    Se seleccionaron tres zonas de diferentes para no centralizar la aplicación en caso tal de que una de las zonas caiga debido a cualquier tipo de imprevisto.
+
+    Que una IP sea ***zone redundant*** significa que todos los flujos entrantes o salientes son atendidos por múltiples zonas de disponibilidad en una región simultáneamente utilizando una esa sola dirección de IP.
+    
 * ¿Cuál es el propósito del *Network Security Group*?
+
+    
 * Informe de newman 1 (Punto 2)
 * Presente el Diagrama de Despliegue de la solución.
 
