@@ -312,10 +312,46 @@ newman run ARSW_LOAD-BALANCING_AZURE.postman_collection.json -e [ARSW_LOAD-BALAN
     
 * ¿Cuál es el propósito del *Network Security Group*?
 
+    Se asegura de filtrar el tráfico de red hacia y desde los recursos Azure en una red virtual Azure con un grupo de seguridad de red. Continene reglas de seguridad que permiten o niegan el tráfico entrante a la red.
+
     
 * Informe de newman 1 (Punto 2)
+    
+    + Experimento
+        + Prueba de escalamiento vertical:
+        
+        ![](https://cdn.discordapp.com/attachments/496160491228626964/778379732794212382/unknown.png)
+        
+        + Consumo en la máquina que se escaló:
+        
+        ![](https://cdn.discordapp.com/attachments/778382673341186090/778383235071082567/unknown.png)
+
+        + Prueba de escalamiento horizontal:
+        
+        ![](https://cdn.discordapp.com/attachments/496160491228626964/778380023405084672/unknown.png)
+        
+        + Consumo en las máquinas del grupo de balanceo de carga:
+        
+        ![](https://cdn.discordapp.com/attachments/496160491228626964/778382493136977960/unknown.png)
+        ![](https://cdn.discordapp.com/attachments/496160491228626964/778382528645038080/unknown.png)
+        ![](https://media.discordapp.net/attachments/496160491228626964/778382601433251880/unknown.png)
+        ![](https://cdn.discordapp.com/attachments/778382673341186090/778382684980248626/unknown.png)
+        
+    + Tabla Comparativa
+    
+    | Escalamiento  |Instancia   | cantidad de Vm  |Tiempo de respuesta (min)  |Peticiones exitosas   | Horas disponible | Costo mensual |
+    |---|---|---|---|---|---|---|
+    |   vertical|  B1ms |  1 |  3 | 10  | 730  | 66.50 USD  |
+    |   horizontal|  B1ls | 4  |  5 | 10  | 730 |  17.48 USD|
+    
+    + Conclusiones
+    
+    El escalamiento de un nodo en vertical, en este caso tiene una disminución en el tiempo de respuesta de al menos 2 minutos, sin embargo este comportamiento es variable, realmente la diferencia entre las dos opciones de escalamiento se ve fuertemente influenciada por la conexión con los servicios. Los dos experimentos tuvieron un comportamiento bueno con las peticiones, ninguna falló. Sin embargo la carga de procesamiento que se da en el escalamiento vertical no tiene el mejor comportamiento con las peticiones concurrentes, ventaja que si aprovecha el escalado horizontal gracias al balanceador de caraga, en el experimiento de la carga concurrente se pudo observar como se distribuyen las peticiones en las 4 máquinas. El coste mensual del escalamiento vertical es excesivo comparado con el escalamiento horizontal, en este caso concluimos que el escalamiento horizontal es la opción más viable.
+
+
 * Presente el Diagrama de Despliegue de la solución.
 
+![](https://cdn.discordapp.com/attachments/496160491228626964/778350452467040256/unknown.png)
 
 
 
